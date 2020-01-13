@@ -15,3 +15,5 @@ provider:
   name: aws
   stage: dev
 </code></pre>
+
+**left off around 42:00 in the video**
