@@ -15,6 +15,3 @@ provider:
   name: aws
   stage: dev
 <code></pre>
-
-
-**left off around 40:00 I think**
