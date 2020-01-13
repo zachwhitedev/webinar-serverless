@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: webinarserverless
+service: thekittens-crud
 # app and org for use with dashboard.serverless.com
 #app: your-app-name
 #org: your-org-name
@@ -58,8 +58,32 @@ provider:
 #    - exclude-me-dir/**
 
 functions:
-  hello:
-    handler: handler.hello
+  create:
+    handler: handler.create
+    events: 
+      - http:
+          path: /v1/kitten
+          method: post
+  list:
+    handler: handler.list
+      - http:
+          path: /v1/kitten
+          method: get
+  get:
+    handler: handler.get
+      - http:
+          path: /v1/kitten/{name}
+          method: get
+  update:
+    handler: handler.update
+      - http:
+          path: /v1/kitten/{name}
+          method: put
+  delete:
+    handler: handler.delete
+      - http:
+          path: /v1/kitten{name}
+          method: delete
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

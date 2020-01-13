@@ -1,18 +1,34 @@
 'use strict';
 
-module.exports.hello = async event => {
-  return {
-    statusCode: 200,
-    body: JSON.stringify(
-      {
-        message: 'Go Serverless v1.0! Your function executed successfully!',
-        input: event,
-      },
-      null,
-      2
-    ),
-  };
+module.exports = {
+  create: async (event, context) => {
+    let bodyObj = {}
+    try {
+      bodyObj = JSON.parse(event.body)
+    } catch(jsonError) {
+      console.log('There was an error parsing the body', jsonError)
+      return {
+        statusCode: 400
+      }
+    }
+    if(typeof bodyObj.name == 'undefined' || 
+    typeof bodyObj.age == 'undefined') {
+      console.log('Missing parameters')
+      return {
+        statusCode: 400
+      }
+    } 
+  },
+  list: async (event, context) = {
 
-  // Use this code if you don't use the http event with the LAMBDA-PROXY integration
-  // return { message: 'Go Serverless v1.0! Your function executed successfully!', event };
+  },
+  get: async (event, context) = {
+
+  },
+  update: async (event, context) = {
+
+  },
+  delete: async (event, context) = {
+
+  },
 };
