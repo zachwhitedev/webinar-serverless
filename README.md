@@ -14,4 +14,4 @@ service: service-name
 provider:
   name: aws
   stage: dev
-<code></pre>
+</code></pre>
