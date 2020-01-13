@@ -7,6 +7,7 @@ module.exports = {
       bodyObj = JSON.parse(event.body)
     } catch(jsonError) {
       console.log('There was an error parsing the body', jsonError)
+      // console.log, when it comes to Lambda functions, gets printed to your CloudWatch logs
       return {
         statusCode: 400
       }
