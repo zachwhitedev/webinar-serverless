@@ -10,7 +10,7 @@ module.exports = {
       console.log('There was an error parsing the body', jsonError);
       // console.log, when it comes to Lambda functions, gets printed to your CloudWatch logs
       return {
-        statusCode: 400
+        statusCode: 12
       };
     }
     if (
@@ -19,7 +19,7 @@ module.exports = {
     ) {
       console.log('Missing parameters');
       return {
-        statusCode: 400
+        statusCode: 13
       };
     }
 
@@ -38,12 +38,12 @@ module.exports = {
       console.log('There was a problem putting the kitten.');
       console.log('putParams', putParams);
       return {
-        statusCode: 500
+        statusCode: 14
       };
     }
 
     return {
-      statusCode: 201
+      statusCode: 201,
     };
   },
   list: async (event, context) => {
@@ -91,6 +91,7 @@ module.exports = {
         name: event.pathParameters.name
       }
     }
+    let getResult = {}
     try{
       let dynamodb = new AWS.DynamoDB.DocumentClient()
       getResult = dynamodb.get(getParams).promise()
@@ -101,8 +102,92 @@ module.exports = {
         statusCode: 500
       }
     }
+    if(getResult.Item == null){
+      return {
+        statusCode: 404
+      }
+    }
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        name: getResult.Item.name,
+        age: getResult.Item.age
+      })
+    }
   },
 
-  update: async (event, context) => {},
-  delete: async (event, context) => {}
+  update: async (event, context) => {
+    let bodyObj = {};
+    try {
+      bodyObj = JSON.parse(event.body);
+    } catch (jsonError) {
+      console.log('There was an error parsing the body', jsonError);
+      // console.log, when it comes to Lambda functions, gets printed to your CloudWatch logs
+      return {
+        statusCode: 400
+      };
+    }
+    if (
+      typeof bodyObj.age == 'undefined'
+    ) {
+      console.log('Missing parameters');
+      return {
+        statusCode: 400
+      };
+    }
+    let updateParams = {
+      TableName: process.env.DYNAMO_KITTEN_TABLE,
+      Key: {
+        name: event.pathParameters.name
+      },
+      UpdateExpression: 'set #age = :age',
+      ExpressionAttributeName: {
+        '#age':'age'
+      },
+      ExpressionAttributeValues: {
+        ':age': bodyObj.age
+      }
+    }
+    try {
+      let dynamodb = new AWS.DynamoDB.DocumentClient()
+      dynamodb.update(updateParams).promise()
+    } catch(updateError){
+      console.log('There was a problem scanning the kittens')
+      console.log('updateError', updateError)
+      return {
+        statusCode: 500
+      }
+    }
+    if(updateResult.Item == null){
+      return {
+        statusCode: 404
+      }
+    }
+    return {
+      statusCode: 200,
+    }
+  },  
+  delete: async (event, context) => {
+    let deleteParams = {
+      TableName: process.env.DYNAMO_KITTEN_TABLE,
+      Key: {
+        name: event.pathParameters.name
+      }
+    }
+    let deleteResult = {}
+    try{
+      let dynamodb = new AWS.DynamoDB.DocumentClient()
+      deleteResult = dynamodb.delete(deleteParams).promise()
+    } catch(deleteError){
+      console.log('There was a problem deleting the kittens')
+      console.log('deleteError', getError)
+      return {
+        statusCode: 500
+      }
+    }
+
+    return {
+      statusCode: 200,
+    }
+  }
 };

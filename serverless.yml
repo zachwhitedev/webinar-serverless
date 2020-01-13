@@ -13,8 +13,8 @@
 
 service: thekittens-crud
 # app and org for use with dashboard.serverless.com
-#app: your-app-name
-#org: your-org-name
+app: webinar-kittens-api
+org: zachwhitedev
 
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
@@ -46,7 +46,7 @@ provider:
 
 # you can define service wide environment variables here
   environment:
-    DYNAMO_KITTEN_TABLE: kittenTable
+    DYNAMO_KITTEN_TABLE: ${self:service}-kittens-${opt:stage}
 
 # you can add packaging information here
 #package:
@@ -66,23 +66,27 @@ functions:
           method: post
   list:
     handler: handler.list
+    events:
       - http:
           path: /v1/kitten
           method: get
   get:
     handler: handler.get
+    events:
       - http:
           path: /v1/kitten/{name}
           method: get
   update:
     handler: handler.update
+    events:
       - http:
           path: /v1/kitten/{name}
           method: put
   delete:
     handler: handler.delete
+    events:
       - http:
-          path: /v1/kitten{name}
+          path: /v1/kitten/{name}
           method: delete
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -125,7 +129,20 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
+resources:
+  Resources:
+    kittensTable:
+      Type: 'AWS::DynamoDB::Table'
+      Properties:
+        TableName: ${self:service}-kittens-${opt:stage}
+        AttributeDefinitions:
+          - AttributeName: name
+            AttributeType: S
+        KeySchema:
+          - AttributeName: name
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
 #  Resources:
 #    NewResource:
 #      Type: AWS::S3::Bucket
