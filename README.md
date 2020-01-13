@@ -1,3 +1,4 @@
+- <code>cd</code> into the name of your API folder, in this case <code>webinarServerless</code>. Then...
 - created from template using command <code>serverless create --template aws-nodejs</code>
 - <code>npm init</code> (this will allow you to use npm modules. Entry point should be set to <code>handler.js</code>)
 - <code>npm install aws-sdk --save</code>
